@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prikaz podatkov v.003</title>
+    <title>Prikaz podatkov</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: black; color: white; text-align: center; }
         #data-container { margin: 20px auto; width: 80%; }
+        iframe { display: none; }
     </style>
 </head>
 <body>
@@ -14,20 +15,25 @@
     <div id="data-container">Nalagam podatke...</div>
     
     <script>
-        // Določi ime trenutne strani iz URL-a
-        const currentPage = window.location.pathname.split('/')[1];
+        // Določi ime trenutne strani
+        const pathParts = window.location.pathname.split('/');
+        const currentPage = pathParts.length > 2 ? pathParts[1] : 'oneuser';
         
-        // Ustvari iframe za komunikacijo prek api-site
+        // Ustvari iframe za komunikacijo
         const iframe = document.createElement('iframe');
         iframe.src = `https://blbms.github.io/api-site/?source=${currentPage}`;
-        iframe.style.display = 'none';
         document.body.appendChild(iframe);
 
         // Prejmi oblikovane podatke
         window.addEventListener('message', (event) => {
             if (event.origin !== "https://blbms.github.io") return;
-            if (event.data.type === "formatted-data" && event.data.source === currentPage) {
+            
+            if (event.data.type === "formatted-data") {
                 document.getElementById('data-container').innerHTML = event.data.html;
+            } else if (event.data.type === "error") {
+                document.getElementById('data-container').innerHTML = `
+                    <div style="color:red;">Napaka: ${event.data.message}</div>
+                `;
             }
         });
     </script>
