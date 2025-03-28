@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prikaz podatkov</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: black; 
+            color: white; 
+            text-align: center;
+        }
+        #data-container { 
+            margin: 20px auto; 
+            width: 80%; 
+        }
+    </style>
+</head>
+<body>
+    <h2>Prikaz podatkov v.003</h2>
+    <div id="data-container">Nalagam podatke...</div>
+    
+    <script>
+        // Naloži podatke prek zaščitene poti
+        fetch('https://apicc.42web.io/proxy-content', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-From': window.location.href
+            },
+            body: JSON.stringify({
+                url: 'https://blbms.github.io/oneuser/data.json'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Prikaži oblikovane podatke
+            document.getElementById('data-container').innerHTML = data.html;
+        })
+        .catch(error => {
+            console.error('Napaka:', error);
+            document.getElementById('data-container').innerHTML = 'Napaka pri nalaganju podatkov';
+        });
+    </script>
+</body>
+</html>
